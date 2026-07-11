@@ -152,7 +152,12 @@ public class AdjustableUtil {
 
                   f.set(object, block);
                } else if (f.getType().equals(ParticleOptions.class)) {
-                  f.set(object, PhysicsMod.registeredParticles.get(json.get(adjustable.id()).getAsString()));
+                  JsonElement element = json.get(adjustable.id());
+                  if (element == null || element.isJsonNull()) {
+                     f.set(object, null);
+                  } else {
+                     f.set(object, PhysicsMod.registeredParticles.get(element.getAsString()));
+                  }
                } else if (f.getType().equals(SoundEvent.class)) {
                   JsonElement element = json.get(adjustable.id());
                   if (element == null || element.isJsonNull()) {
@@ -161,7 +166,12 @@ public class AdjustableUtil {
                      f.set(object, PhysicsMod.registeredSounds.get(json.get(adjustable.id()).getAsString()));
                   }
                } else if (f.getType().equals(Animation.class)) {
-                  f.set(object, ConfigAnimations.animations.get(json.get(adjustable.id()).getAsLong()));
+                  JsonElement element = json.get(adjustable.id());
+                  if (element == null || element.isJsonNull()) {
+                     f.set(object, null);
+                  } else {
+                     f.set(object, ConfigAnimations.animations.get(element.getAsLong()));
+                  }
                } else if (Collection.class.isAssignableFrom(f.getType())) {
                   Collection<Object> collection = (Collection<Object>)f.get(object);
                   JsonArray arr = json.get(adjustable.id()).getAsJsonArray();
@@ -176,6 +186,9 @@ public class AdjustableUtil {
                }
             }
          } catch (Exception e) {
+            Adjustable adjustable = f.getAnnotation(Adjustable.class);
+            String key = adjustable != null ? adjustable.id() : "n/a";
+            System.err.println("Failed to deserialize field '" + f.getName() + "' (key: " + key + "): " + e.getMessage());
             e.printStackTrace();
          }
       }

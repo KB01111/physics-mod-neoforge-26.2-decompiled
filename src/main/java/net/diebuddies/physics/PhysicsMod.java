@@ -526,7 +526,9 @@ public class PhysicsMod {
    }
 
    public static PhysicsMod getInstanceNullable(ClientLevel level) {
-      return (PhysicsMod)instances.get(level);
+      synchronized (instances) {
+         return (PhysicsMod)instances.get(level);
+      }
    }
 
    public static PhysicsMod getCurrentInstance() {
