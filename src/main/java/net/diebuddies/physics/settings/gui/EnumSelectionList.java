@@ -1,5 +1,6 @@
 package net.diebuddies.physics.settings.gui;
 
+import java.util.Locale;
 import net.diebuddies.physics.settings.cloth.BaseEntry;
 import net.diebuddies.physics.settings.cloth.LabelEntry;
 import net.diebuddies.physics.settings.gui.legacy.LegacyObjectSelectionList;
@@ -22,7 +23,7 @@ public class EnumSelectionList extends LegacyObjectSelectionList<BaseEntry> {
 
       for (Enum<?> value : this.selectedEnum.getDeclaringClass().getEnumConstants()) {
          String label = Language.getInstance().getOrDefault(value.toString());
-         if (label.toLowerCase().contains(this.filter.toLowerCase())) {
+         if (label.toLowerCase(Locale.ROOT).contains(this.filter.toLowerCase(Locale.ROOT))) {
             LabelEntry entry = new LabelEntry(this, label);
             entry.setUserData(value);
             this.addEntry(entry);
