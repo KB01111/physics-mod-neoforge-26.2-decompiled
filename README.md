@@ -78,6 +78,20 @@ public static final int SIZEOF_POINTER = __sizeOfPointer();
 
 `physicsmod.mixins.json` had a stale `refmap` entry from the original Fabric/Forge build. Removed so NeoForge/Mixin uses runtime discovery against named sources.
 
+### Vineflower failures — reconstructed methods
+
+Vineflower could not decompile several methods and either dropped the body or left bytecode comments:
+
+- `EnumSelectionList.refreshEntries()` — enum picker list population
+- `AdjustableUtil.readFields()` — JSON deserialization for dynamic vine/block settings
+- `SmokeSettingsScreen.init()`, `LiquidSettingsScreen.init()`, `ProjectileSettingsScreen.init()`, `VineSettingsScreen.init()` — settings menus with declared options but empty `init()` bodies
+
+These were reconstructed from embedded bytecode and/or the inverse of sibling methods (e.g. `writeFields`).
+
+### Incorrect render-thread guards
+
+Some mixins incorrectly wrapped game-thread callbacks in `RenderSystem.isOnRenderThread()`, preventing physics triggers from firing. Removed from mob death, block update, and explosion handlers; `updateQueue` made thread-safe with `ConcurrentLinkedQueue`.
+
 ### Compile stubs
 
 Optional integration code references OptiFine and Vivecraft APIs. Minimal stub classes under `src/compileStub/java/` satisfy the compiler without bundling those mods.

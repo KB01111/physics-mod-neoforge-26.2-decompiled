@@ -68,6 +68,11 @@ public class VineSettingsScreen extends LegacyOptionsSubScreen {
    protected void init() {
       ConfigVines.init();
       this.list = new LegacyOptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+      this.list.addBig(PHYSICS_VINES);
+      this.list.addBig(PHYSICS_VINE_RANGE);
+      this.list.addBig(PHYSICS_MAX_LOADED_BLOCKS);
+      this.list.addBig(PHYSICS_LIFETIME_VINES);
+      this.list.addBig(PHYSICS_LIFETIME_VARIANCE_VINES);
       this.children.add(this.list);
       this.addRenderableWidget(
          ButtonSettings.builder(

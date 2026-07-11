@@ -207,6 +207,23 @@ public class LiquidSettingsScreen extends LegacyOptionsSubScreen {
             super.renderDecorations(guiGraphics, mouseX, mouseY);
          }
       };
+      this.list.addBig(PHYSICS_LIQUIDS);
+      this.list.addBig(this.PHYSICS_CUDA_LIQUIDS);
+      this.PHYSICS_CUDA_LIQUIDS.setActive(StarterClient.cudaAvailable);
+      if (ConfigClient.cudaLiquids()) {
+         this.list.addBig(PHYSICS_CUDA_LIQUID_PARTICLE_SIZE);
+         this.list.addBig(PHYSICS_CUDA_LIQUID_AMOUNT);
+         this.list.addBig(PHYSICS_CUDA_LIQUID_MAX_PARTICLES);
+         this.list.addBig(PHYSICS_LIFETIME_CUDA_LIQUID);
+         this.list.addBig(PHYSICS_LIFETIME_VARIANCE_CUDA_LIQUID);
+      } else {
+         this.list.addBig(PHYSICS_LIQUID_PARTICLE_SIZE);
+         this.list.addBig(PHYSICS_LIQUID_AMOUNT);
+         this.list.addBig(PHYSICS_LIQUID_MAX_PARTICLES);
+         this.list.addBig(PHYSICS_LIFETIME_LIQUID);
+         this.list.addBig(PHYSICS_LIFETIME_VARIANCE_LIQUID);
+      }
+
       this.children.add(this.list);
       this.addRenderableWidget(
          ButtonSettings.builder(
