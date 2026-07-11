@@ -89,15 +89,14 @@ public class PhysicsUpdater {
 
       mod.removeUpdates.clear();
 
-      for (int i = mod.updateQueue.size() - 1; i >= 0; i--) {
-         BlockUpdate blockUpdate = mod.updateQueue.get(i);
+      BlockUpdate blockUpdate;
+      while ((blockUpdate = mod.updateQueue.poll()) != null) {
          if (mod.fallingBlocks.isEmpty() || !mod.fallingBlocks.contains(blockUpdate.pos)) {
             mod.removeUpdates.add(blockUpdate);
          }
       }
 
       mod.fallingBlocks.clear();
-      mod.updateQueue.clear();
       List<PhysicsEntity> newParts = new ObjectArrayList();
       List<PhysicsEntity> newPartsVoxel = new ObjectArrayList();
       double maxActivationDistanceSqr = ConfigClient.blockPhysicsRange * ConfigClient.blockPhysicsRange;

@@ -51,6 +51,7 @@ public class SoundSettingsScreen extends LegacyOptionsSubScreen {
       this.list = new LegacyOptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
       this.list.addBig(IMPACT_VOLUME);
       this.list.addBig(WIND_VOLUME);
+      this.list.addBig(OCEAN_SPLASH_VOLUME);
       this.children.add(this.list);
       this.addRenderableWidget(ButtonSettings.builder(this.width / 2 - 50, this.height - 27, 100, 20, CommonComponents.GUI_DONE, button -> this.onClose()));
    }

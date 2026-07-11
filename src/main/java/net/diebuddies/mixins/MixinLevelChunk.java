@@ -1,6 +1,5 @@
 package net.diebuddies.mixins;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.diebuddies.physics.BlockUpdate;
 import net.diebuddies.physics.PhysicsMod;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -25,9 +24,9 @@ public class MixinLevelChunk {
       method = {"setBlockState"}
    )
    private void setBlockState(BlockPos pos, BlockState state, int type, CallbackInfoReturnable<BlockState> ci) {
-      if (RenderSystem.isOnRenderThread() && this.level instanceof ClientLevel clientLevel) {
-         BlockState before = this.level.getBlockState(pos);
+      if (this.level instanceof ClientLevel clientLevel) {
          PhysicsMod mod = PhysicsMod.getInstance(clientLevel);
+         BlockState before = this.level.getBlockState(pos);
          if ((type & 64) == 0) {
             mod.blockUpdates.add(pos.immutable());
             if (before != null

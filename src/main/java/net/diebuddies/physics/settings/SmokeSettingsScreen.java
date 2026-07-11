@@ -384,6 +384,49 @@ public class SmokeSettingsScreen extends LegacyOptionsSubScreen {
    protected void init() {
       this.list = new LegacyOptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
       this.list.renderBackgroundWhenIngame = false;
+      this.list.addBig(new LabelOption(Language.getInstance().getOrDefault("physicsmod.menu.smoke.performance")));
+      this.list.addBig(PHYSICS_SMOKE);
+      this.list.addSmall(this.PHYSICS_VOLUMETRIC_SMOKE, this.PHYSICS_CUDA_SMOKE);
+      if (ConfigClient.areVolumetricSmokePhysicsEnabled()) {
+         this.list.addBig(this.PHYSICS_VOLUMETRIC_SMOKE_QUALITY);
+      }
+
+      this.list.addBig(PHYSICS_SMOKE_DISTANCE);
+      this.list.addBig(PHYSICS_SMOKE_PARTICLE_LIMIT);
+      this.list.addBig(PHYSICS_SMOKE_BRIGHTNESS);
+      this.list.addBig(new LabelOption(Language.getInstance().getOrDefault("physicsmod.menu.smoke.behavior")));
+      this.list.addBig(PHYSICS_LIFETIME_SMOKE);
+      this.list.addBig(PHYSICS_LIFETIME_VARIANCE_SMOKE);
+      this.list.addBig(PHYSICS_DESPAWN_TIME_SMOKE);
+      this.list.addBig(PHYSICS_DESPAWN_TIME_VARIANCE_SMOKE);
+      this.list.addBig(PHYSICS_EMBER_PARTICLES_AMOUNT);
+      this.list.addBig(new LabelOption(Language.getInstance().getOrDefault("physicsmod.menu.smoke.visuals")));
+      if (ConfigClient.areVolumetricSmokePhysicsEnabled()) {
+         this.list.addSmall(PHYSICS_VOLUME_COLOR_RED, PHYSICS_VOLUME_COLOR_GREEN);
+         this.list.addBig(PHYSICS_VOLUME_COLOR_BLUE);
+         this.list.addBig(PHYSICS_VOLUME_SMOKE_FIRE);
+         this.list.addBig(PHYSICS_VOLUME_SMOKE_RADIUS);
+         this.list.addBig(PHYSICS_SMOKE_PUFFINESS);
+         this.list.addBig(PHYSICS_SMOKE_SHADOW);
+      } else {
+         this.color = new LabelOption(Language.getInstance().getOrDefault("physicsmod.menu.smoke.color"));
+         this.list.addBig(this.color);
+         this.list.addSmall(PHYSICS_COLOR_RED, PHYSICS_COLOR_GREEN);
+         this.list.addBig(PHYSICS_COLOR_BLUE);
+         this.denseColor = new LabelOption(Language.getInstance().getOrDefault("physicsmod.menu.smoke.densecolor"));
+         this.list.addBig(this.denseColor);
+         this.list.addSmall(PHYSICS_DENSE_COLOR_RED, PHYSICS_DENSE_COLOR_GREEN);
+         this.list.addBig(PHYSICS_DENSE_COLOR_BLUE);
+      }
+
+      if (!ConfigClient.areVolumetricSmokePhysicsEnabled()) {
+         this.list.addBig(new LabelOption(Language.getInstance().getOrDefault("physicsmod.menu.smoke.emitter")));
+         this.list.addBig(PHYSICS_SMOKE_FIRE);
+         this.list.addBig(PHYSICS_SMOKE_CAMPFIRE);
+         this.list.addBig(PHYSICS_SMOKE_BLAZE);
+         this.list.addBig(PHYSICS_SMOKE_OTHER);
+      }
+
       this.children.add(this.list);
       this.addRenderableWidget(ButtonSettings.builder(this.width / 2 + 5, this.height - 27, 75, 20, CommonComponents.GUI_DONE, button -> this.onClose()));
       this.addRenderableWidget(

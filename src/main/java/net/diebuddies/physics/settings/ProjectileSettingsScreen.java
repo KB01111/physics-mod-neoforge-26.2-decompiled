@@ -128,6 +128,14 @@ public class ProjectileSettingsScreen extends LegacyOptionsSubScreen {
 
    protected void init() {
       this.list = new LegacyOptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+      this.list.addSmall(PHYSICS_SNOWBALL_SHADE, PHYSICS_SNOWBALL_MODEL);
+      this.list.addBig(PHYSICS_SNOWBALL_IMPACT);
+      this.list.addSmall(PHYSICS_ENDERPEARL_SHADE, PHYSICS_ENDERPEARL_MODEL);
+      this.list.addBig(PHYSICS_ENDERPEARL_IMPACT);
+      this.list.addSmall(PHYSICS_EGG_SHADE, PHYSICS_EGG_MODEL);
+      this.list.addBig(PHYSICS_EGG_IMPACT);
+      this.list.addBig(PHYSICS_LIFETIME_ITEMS);
+      this.list.addBig(PHYSICS_LIFETIME_VARIANCE_ITEMS);
       this.children.add(this.list);
       this.addRenderableWidget(
          ButtonSettings.builder(
