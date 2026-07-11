@@ -1,0 +1,72 @@
+plugins {
+    id 'java'
+    id 'net.neoforged.moddev' version '2.0.141'
+}
+
+group = 'net.diebuddies'
+version = '3.1.45'
+
+base {
+    archivesName = 'physics-mod-3.1.45-mc-26.2-neoforge-decompiled'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+neoForge {
+    version = '26.2.0.9-beta'
+    
+    validateAccessTransformers = true
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+        }
+    }
+
+    mods {
+        physicsmod {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    compileStub {
+        java {
+            srcDir 'src/compileStub/java'
+        }
+        compileClasspath += sourceSets.main.compileClasspath
+    }
+    main {
+        compileClasspath += sourceSets.compileStub.output
+    }
+}
+
+tasks.named('compileCompileStubJava') {
+    dependsOn tasks.named('createMinecraftArtifacts')
+}
+
+tasks.named('compileJava') {
+    dependsOn compileStubClasses
+}
+
+dependencies {
+    compileOnly files(
+        'compile-deps/sodium-mod.jar',
+        'compile-deps/iris-mod.jar',
+        'compile-deps/emf-mod.jar',
+        'compile-deps/vivecraft-mod.jar',
+        'compile-deps/etf-mod.jar'
+    )
+}

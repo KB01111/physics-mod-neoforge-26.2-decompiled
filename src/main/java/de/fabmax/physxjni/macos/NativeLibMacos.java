@@ -1,0 +1,24 @@
+package de.fabmax.physxjni.macos;
+
+import de.fabmax.physxjni.NativeLib;
+import java.util.ArrayList;
+import java.util.List;
+
+public class NativeLibMacos extends NativeLib {
+   private static final String version = "2.5.1";
+   private static final List<String> libraries = new ArrayList<String>() {
+      {
+         this.add("libPhysXJniBindings_64.dylib");
+      }
+   };
+
+   @Override
+   public String getVersion() {
+      return "2.5.1";
+   }
+
+   @Override
+   protected List<String> getLibResourceNames() {
+      return libraries;
+   }
+}

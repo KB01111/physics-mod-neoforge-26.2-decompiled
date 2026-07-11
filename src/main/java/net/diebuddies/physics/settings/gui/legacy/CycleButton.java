@@ -1,0 +1,313 @@
+package net.diebuddies.physics.settings.gui.legacy;
+
+import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import net.diebuddies.physics.settings.ButtonSettings;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphicsExtractor.HoveredTextEffects;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
+
+public class CycleButton<T> extends AbstractButton implements UXTooltipAccessor {
+   public static final BooleanSupplier DEFAULT_ALT_LIST_SELECTOR = () -> Minecraft.getInstance().hasAltDown();
+   private static final List<Boolean> BOOLEAN_OPTIONS = ImmutableList.of(Boolean.TRUE, Boolean.FALSE);
+   private final Component name;
+   private int index;
+   private T value;
+   private final CycleButton.ValueListSupplier<T> values;
+   private final Function<T, Component> valueStringifier;
+   private final Function<CycleButton<T>, MutableComponent> narrationProvider;
+   private final CycleButton.OnValueChange<T> onValueChange;
+   private final CycleButton.TooltipSupplier<T> tooltipSupplier;
+   private final boolean displayOnlyValue;
+
+   CycleButton(
+      int i,
+      int j,
+      int k,
+      int l,
+      Component component,
+      Component component2,
+      int m,
+      T object,
+      CycleButton.ValueListSupplier<T> valueListSupplier,
+      Function<T, Component> function,
+      Function<CycleButton<T>, MutableComponent> function2,
+      CycleButton.OnValueChange<T> onValueChange,
+      CycleButton.TooltipSupplier<T> tooltipSupplier,
+      boolean bl
+   ) {
+      super(i, j, k, l, component);
+      this.name = component2;
+      this.index = m;
+      this.value = object;
+      this.values = valueListSupplier;
+      this.valueStringifier = function;
+      this.narrationProvider = function2;
+      this.onValueChange = onValueChange;
+      this.tooltipSupplier = tooltipSupplier;
+      this.displayOnlyValue = bl;
+      ButtonSettings.addCustomButtonStyle(this);
+   }
+
+   public void onPress(InputWithModifiers inputWithModifiers) {
+      if (inputWithModifiers.hasShiftDown()) {
+         this.cycleValue(-1);
+      } else {
+         this.cycleValue(1);
+      }
+   }
+
+   private void cycleValue(int i) {
+      List<T> list = this.values.getSelectedList();
+      this.index = Mth.positiveModulo(this.index + i, list.size());
+      T object = list.get(this.index);
+      this.updateValue(object);
+      this.onValueChange.onValueChange(this, object);
+   }
+
+   private T getCycledValue(int i) {
+      List<T> list = this.values.getSelectedList();
+      return list.get(Mth.positiveModulo(this.index + i, list.size()));
+   }
+
+   public boolean mouseScrolled(double d, double e, double f, double g) {
+      if (g > 0.0) {
+         this.cycleValue(-1);
+      } else if (g < 0.0) {
+         this.cycleValue(1);
+      }
+
+      return true;
+   }
+
+   public void setValue(T object) {
+      List<T> list = this.values.getSelectedList();
+      int i = list.indexOf(object);
+      if (i != -1) {
+         this.index = i;
+      }
+
+      this.updateValue(object);
+   }
+
+   private void updateValue(T object) {
+      Component component = this.createLabelForValue(object);
+      this.setMessage(component);
+      this.value = object;
+   }
+
+   private Component createLabelForValue(T object) {
+      return (Component)(this.displayOnlyValue ? this.valueStringifier.apply(object) : this.createFullName(object));
+   }
+
+   private MutableComponent createFullName(T object) {
+      return CommonComponents.optionNameValue(this.name, this.valueStringifier.apply(object));
+   }
+
+   public T getValue() {
+      return this.value;
+   }
+
+   protected MutableComponent createNarrationMessage() {
+      return this.narrationProvider.apply(this);
+   }
+
+   public void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+      narrationElementOutput.add(NarratedElementType.TITLE, this.createNarrationMessage());
+      if (this.active) {
+         T object = this.getCycledValue(1);
+         Component component = this.createLabelForValue(object);
+         if (this.isFocused()) {
+            narrationElementOutput.add(NarratedElementType.USAGE, Component.translatable("narration.cycle_button.usage.focused", new Object[]{component}));
+         } else {
+            narrationElementOutput.add(NarratedElementType.USAGE, Component.translatable("narration.cycle_button.usage.hovered", new Object[]{component}));
+         }
+      }
+   }
+
+   public MutableComponent createDefaultNarrationMessage() {
+      return wrapDefaultNarrationMessage((Component)(this.displayOnlyValue ? this.createFullName(this.value) : this.getMessage()));
+   }
+
+   @Override
+   public Component getTooltipLegacy() {
+      return this.tooltipSupplier.apply(this.value);
+   }
+
+   public static <T> CycleButton.Builder<T> builder(Function<T, Component> function) {
+      return new CycleButton.Builder<>(function);
+   }
+
+   public static CycleButton.Builder<Boolean> booleanBuilder(Component component, Component component2) {
+      return new CycleButton.Builder<Boolean>(boolean_ -> boolean_ ? component : component2).withValues(BOOLEAN_OPTIONS);
+   }
+
+   public static CycleButton.Builder<Boolean> onOffBuilder() {
+      return new CycleButton.Builder<Boolean>(boolean_ -> boolean_ ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF).withValues(BOOLEAN_OPTIONS);
+   }
+
+   public static CycleButton.Builder<Boolean> onOffBuilder(boolean bl) {
+      return onOffBuilder().withInitialValue(bl);
+   }
+
+   public boolean isMouseOver(double d, double e) {
+      return this.visible
+         && d >= (double)this.getX()
+         && e >= (double)this.getY()
+         && d < (double)(this.getX() + this.width)
+         && e < (double)(this.getY() + this.height);
+   }
+
+   protected void extractContents(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
+      this.extractDefaultSprite(guiGraphics);
+      this.extractDefaultLabel(guiGraphics.textRendererForWidget(this, HoveredTextEffects.NONE));
+   }
+
+   public static class Builder<T> {
+      private int initialIndex;
+      @Nullable
+      private T initialValue;
+      private final Function<T, Component> valueStringifier;
+      private CycleButton.TooltipSupplier<T> tooltipSupplier = object -> null;
+      private Function<CycleButton<T>, MutableComponent> narrationProvider = CycleButton::createDefaultNarrationMessage;
+      private CycleButton.ValueListSupplier<T> values = CycleButton.ValueListSupplier.create(ImmutableList.of());
+      private boolean displayOnlyValue;
+
+      public Builder(Function<T, Component> function) {
+         this.valueStringifier = function;
+      }
+
+      public CycleButton.Builder<T> withValues(List<T> list) {
+         this.values = CycleButton.ValueListSupplier.create(list);
+         return this;
+      }
+
+      @SafeVarargs
+      public final CycleButton.Builder<T> withValues(T... objects) {
+         return this.withValues(ImmutableList.copyOf(objects));
+      }
+
+      public CycleButton.Builder<T> withValues(List<T> list, List<T> list2) {
+         this.values = CycleButton.ValueListSupplier.create(CycleButton.DEFAULT_ALT_LIST_SELECTOR, list, list2);
+         return this;
+      }
+
+      public CycleButton.Builder<T> withValues(BooleanSupplier booleanSupplier, List<T> list, List<T> list2) {
+         this.values = CycleButton.ValueListSupplier.create(booleanSupplier, list, list2);
+         return this;
+      }
+
+      public CycleButton.Builder<T> withTooltip(CycleButton.TooltipSupplier<T> tooltipSupplier) {
+         this.tooltipSupplier = tooltipSupplier;
+         return this;
+      }
+
+      public CycleButton.Builder<T> withInitialValue(T object) {
+         this.initialValue = object;
+         int i = this.values.getDefaultList().indexOf(object);
+         if (i != -1) {
+            this.initialIndex = i;
+         }
+
+         return this;
+      }
+
+      public CycleButton.Builder<T> withCustomNarration(Function<CycleButton<T>, MutableComponent> function) {
+         this.narrationProvider = function;
+         return this;
+      }
+
+      public CycleButton.Builder<T> displayOnlyValue() {
+         this.displayOnlyValue = true;
+         return this;
+      }
+
+      public CycleButton<T> create(int i, int j, int k, int l, Component component) {
+         return this.create(i, j, k, l, component, (cycleButton, object) -> {
+         });
+      }
+
+      public CycleButton<T> create(int i, int j, int k, int l, Component component, CycleButton.OnValueChange<T> onValueChange) {
+         List<T> list = this.values.getDefaultList();
+         if (list.isEmpty()) {
+            throw new IllegalStateException("No values for cycle button");
+         } else {
+            T object = this.initialValue != null ? this.initialValue : list.get(this.initialIndex);
+            Component component2 = this.valueStringifier.apply(object);
+            Component component3 = (Component)(this.displayOnlyValue ? component2 : CommonComponents.optionNameValue(component, component2));
+            return new CycleButton<>(
+               i,
+               j,
+               k,
+               l,
+               component3,
+               component,
+               this.initialIndex,
+               object,
+               this.values,
+               this.valueStringifier,
+               this.narrationProvider,
+               onValueChange,
+               this.tooltipSupplier,
+               this.displayOnlyValue
+            );
+         }
+      }
+   }
+
+   public interface OnValueChange<T> {
+      void onValueChange(CycleButton var1, T var2);
+   }
+
+   @FunctionalInterface
+   public interface TooltipSupplier<T> extends Function<T, Component> {
+   }
+
+   interface ValueListSupplier<T> {
+      List<T> getSelectedList();
+
+      List<T> getDefaultList();
+
+      static <T> CycleButton.ValueListSupplier<T> create(List<T> list) {
+         final ImmutableList<T> list2 = ImmutableList.copyOf(list);
+         return new CycleButton.ValueListSupplier<T>() {
+            @Override
+            public List<T> getSelectedList() {
+               return list2;
+            }
+
+            @Override
+            public List<T> getDefaultList() {
+               return list2;
+            }
+         };
+      }
+
+      static <T> CycleButton.ValueListSupplier<T> create(final BooleanSupplier booleanSupplier, List<T> list, List<T> list2) {
+         final ImmutableList<T> list3 = ImmutableList.copyOf(list);
+         final ImmutableList<T> list4 = ImmutableList.copyOf(list2);
+         return new CycleButton.ValueListSupplier<T>() {
+            @Override
+            public List<T> getSelectedList() {
+               return booleanSupplier.getAsBoolean() ? list4 : list3;
+            }
+
+            @Override
+            public List<T> getDefaultList() {
+               return list3;
+            }
+         };
+      }
+   }
+}

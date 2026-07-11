@@ -1,0 +1,54 @@
+# Gradle / NeoForge
+build/
+.gradle/
+run/
+out/
+
+# Downloaded compile-only dependency jars (see compile-deps/README.md)
+compile-deps/*.jar
+
+# Extracted mod libraries used during decompile work
+libs/
+
+# Accidentally extracted Minecraft / Mojang sources
+/net/
+/com/mojang/
+src_decompiled/
+
+# Build artifacts
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Logs and debug output
+*.log
+compile-errors.txt
+compile-output*.txt
+build-output.log
+launch-cmd.txt
+
+# Crash reports
+crash-reports/
+
+# IDE and editor
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.cursor/
+*.swp
+*~
+
+# Agent / tooling scratch
+agent-tools/
+
+# Secrets
+.env
+.env.*
+credentials.json
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db

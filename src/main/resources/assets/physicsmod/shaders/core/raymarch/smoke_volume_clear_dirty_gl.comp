@@ -1,0 +1,61 @@
+#GLSL_VERSION
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 4) in;
+
+uniform int   uCascadeIndex;
+uniform ivec3 uGridSize;
+
+layout(r32ui, binding = 0) uniform writeonly uimage3D uDensityAcc;
+layout(r32ui, binding = 2) uniform writeonly uimage3D uLightAcc;
+
+// uint[8] per cascade:
+//   [0] occupied flag (0/1)
+//   [1] maxX
+//   [2] maxY
+//   [3] maxZ
+//   [4] invMinX = (GRID_X-1)-minX
+//   [5] invMinY = (GRID_Y-1)-minY
+//   [6] invMinZ = (GRID_Z-1)-minZ
+//   [7] reserved
+layout(std430, binding = 1) readonly buffer CascadeMetaBuf {
+    uint meta[];
+};
+
+const uint META_STRIDE = 8u;
+
+bool cascadeOccupied() {
+    return meta[uint(uCascadeIndex) * META_STRIDE + 0u] != 0u;
+}
+
+ivec3 prevMinVoxel() {
+    uint base = uint(uCascadeIndex) * META_STRIDE;
+    return ivec3(
+        (uGridSize.x - 1) - int(meta[base + 4u]),
+        (uGridSize.y - 1) - int(meta[base + 5u]),
+        (uGridSize.z - 1) - int(meta[base + 6u])
+    );
+}
+
+ivec3 prevMaxVoxel() {
+    uint base = uint(uCascadeIndex) * META_STRIDE;
+    return ivec3(
+        int(meta[base + 1u]),
+        int(meta[base + 2u]),
+        int(meta[base + 3u])
+    );
+}
+
+void main() {
+    if (!cascadeOccupied()) return;
+
+    ivec3 p = ivec3(gl_GlobalInvocationID.xyz);
+    if (any(greaterThanEqual(p, uGridSize))) return;
+
+    ivec3 lo = clamp(prevMinVoxel(), ivec3(0), uGridSize - ivec3(1));
+    ivec3 hi = clamp(prevMaxVoxel(), ivec3(0), uGridSize - ivec3(1));
+
+    if (any(lessThan(p, lo)) || any(greaterThan(p, hi))) return;
+
+    imageStore(uDensityAcc, p, uvec4(0u));
+    imageStore(uLightAcc,   p, uvec4(0u));
+}

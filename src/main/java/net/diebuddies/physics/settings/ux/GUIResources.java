@@ -1,0 +1,58 @@
+package net.diebuddies.physics.settings.ux;
+
+import net.minecraft.resources.Identifier;
+
+public class GUIResources {
+   public static final Identifier PARALLAX_BLOCKS_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/blocks/background.png");
+   public static final Identifier PARALLAX_BLOCKS_CLOUDS = Identifier.parse("physicsmod:textures/gui/parallax/blocks/clouds.png");
+   public static final Identifier PARALLAX_BLOCKS_RUBBLE = Identifier.parse("physicsmod:textures/gui/parallax/blocks/rubble.png");
+   public static final Identifier PARALLAX_SNOW_OLD = Identifier.parse("physicsmod:textures/gui/parallax/snow/old.png");
+   public static final Identifier PARALLAX_SNOW_NEW = Identifier.parse("physicsmod:textures/gui/parallax/snow/new.png");
+   public static final Identifier PARALLAX_OCEAN_OLD = Identifier.parse("physicsmod:textures/gui/parallax/ocean/old.png");
+   public static final Identifier PARALLAX_OCEAN_NEW = Identifier.parse("physicsmod:textures/gui/parallax/ocean/new.png");
+   public static final Identifier PARALLAX_SOUND_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/sound/background.png");
+   public static final Identifier PARALLAX_SOUND_LAYER_0 = Identifier.parse("physicsmod:textures/gui/parallax/sound/layer_0.png");
+   public static final Identifier PARALLAX_SOUND_LAYER_1 = Identifier.parse("physicsmod:textures/gui/parallax/sound/layer_1.png");
+   public static final Identifier PARALLAX_SOUND_LAYER_2 = Identifier.parse("physicsmod:textures/gui/parallax/sound/layer_2.png");
+   public static final Identifier PARALLAX_LIQUID_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/liquid/background.png");
+   public static final Identifier PARALLAX_LIQUID_LAYER_0 = Identifier.parse("physicsmod:textures/gui/parallax/liquid/layer_0.png");
+   public static final Identifier PARALLAX_LIQUID_LAYER_1 = Identifier.parse("physicsmod:textures/gui/parallax/liquid/layer_1.png");
+   public static final Identifier PARALLAX_LIQUID_LAYER_2 = Identifier.parse("physicsmod:textures/gui/parallax/liquid/layer_2.png");
+   public static final Identifier PARALLAX_CREDITS_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/credits/background.png");
+   public static final Identifier PARALLAX_CREDITS_DRAGON = Identifier.parse("physicsmod:textures/gui/parallax/credits/dragon.png");
+   public static final Identifier PARALLAX_DYNAMIC_BLOCKS_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/dynamicblocks/background.png");
+   public static final Identifier PARALLAX_DYNAMIC_BLOCKS_MIDDLE = Identifier.parse("physicsmod:textures/gui/parallax/dynamicblocks/middle.png");
+   public static final Identifier PARALLAX_DYNAMIC_BLOCKS_FRONT = Identifier.parse("physicsmod:textures/gui/parallax/dynamicblocks/front.png");
+   public static final Identifier PARALLAX_PROJECTILES_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/projectiles/background.png");
+   public static final Identifier PARALLAX_PROJECTILES_MIDDLE = Identifier.parse("physicsmod:textures/gui/parallax/projectiles/middle.png");
+   public static final Identifier PARALLAX_PROJECTILES_LAYER_0 = Identifier.parse("physicsmod:textures/gui/parallax/projectiles/layer_0.png");
+   public static final Identifier PARALLAX_PROJECTILES_LAYER_1 = Identifier.parse("physicsmod:textures/gui/parallax/projectiles/layer_1.png");
+   public static final Identifier PARALLAX_CLOTH_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/cloth/background.png");
+   public static final Identifier PARALLAX_CLOTH_MIDDLE = Identifier.parse("physicsmod:textures/gui/parallax/cloth/middle.png");
+   public static final Identifier PARALLAX_CLOTH_LAYER_0 = Identifier.parse("physicsmod:textures/gui/parallax/cloth/layer_0.png");
+   public static final Identifier PARALLAX_CLOTH_LAYER_1 = Identifier.parse("physicsmod:textures/gui/parallax/cloth/layer_1.png");
+   public static final Identifier PARALLAX_CLOTH_LAYER_2 = Identifier.parse("physicsmod:textures/gui/parallax/cloth/layer_2.png");
+   public static final Identifier PARALLAX_COLLAPSE_BLOCKS_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/collapse/background.png");
+   public static final Identifier PARALLAX_COLLAPSE_BLOCKS_MIDDLE = Identifier.parse("physicsmod:textures/gui/parallax/collapse/middle.png");
+   public static final Identifier PARALLAX_COLLAPSE_BLOCKS_FRONT = Identifier.parse("physicsmod:textures/gui/parallax/collapse/front.png");
+   public static final Identifier PARALLAX_GENERAL_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/general/background.png");
+   public static final Identifier PARALLAX_GENERAL_LAYER_0 = Identifier.parse("physicsmod:textures/gui/parallax/general/layer_0.png");
+   public static final Identifier PARALLAX_GENERAL_LAYER_1 = Identifier.parse("physicsmod:textures/gui/parallax/general/layer_1.png");
+   public static final Identifier PARALLAX_GENERAL_LAYER_2 = Identifier.parse("physicsmod:textures/gui/parallax/general/layer_2.png");
+   public static final Identifier PARALLAX_WEATHER_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/weather/background.png");
+   public static final Identifier PARALLAX_WEATHER_LAYER_0 = Identifier.parse("physicsmod:textures/gui/parallax/weather/layer_0.png");
+   public static final Identifier PARALLAX_WEATHER_LAYER_1 = Identifier.parse("physicsmod:textures/gui/parallax/weather/layer_1.png");
+   public static final Identifier PARALLAX_WEATHER_LAYER_2 = Identifier.parse("physicsmod:textures/gui/parallax/weather/layer_2.png");
+   public static final Identifier PARALLAX_MOBS_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/mobs/background.png");
+   public static final Identifier PARALLAX_MOBS_MIDDLE = Identifier.parse("physicsmod:textures/gui/parallax/mobs/middle.png");
+   public static final Identifier PARALLAX_MOBS_FRONT = Identifier.parse("physicsmod:textures/gui/parallax/mobs/front.png");
+   public static final Identifier PARALLAX_ANIMATIONS_BACKGROUND = Identifier.parse("physicsmod:textures/gui/parallax/animations/background.png");
+   public static final Identifier PARALLAX_ANIMATIONS_MIDDLE = Identifier.parse("physicsmod:textures/gui/parallax/animations/middle.png");
+   public static final Identifier PARALLAX_ANIMATIONS_LAYER_0 = Identifier.parse("physicsmod:textures/gui/parallax/animations/layer_0.png");
+   public static final Identifier PARALLAX_ANIMATIONS_LAYER_1 = Identifier.parse("physicsmod:textures/gui/parallax/animations/layer_1.png");
+   public static final Identifier PARALLAX_SMOKE = Identifier.parse("physicsmod:textures/gui/parallax/smoke/smoke.png");
+   public static final Identifier ARROW = Identifier.parse("physicsmod:textures/gui/arrow.png");
+   public static final Identifier EDIT_TEXTURE = Identifier.parse("physicsmod:textures/gui/edit.png");
+   public static final Identifier REMOVE_TEXTURE = Identifier.parse("physicsmod:textures/gui/remove.png");
+   public static final Identifier BACKGROUND_TEXTURE = Identifier.parse("physicsmod:textures/gui/background.png");
+}

@@ -1,0 +1,79 @@
+#version 460
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 4) in;
+
+layout(r32ui, binding = 2) uniform readonly uimage3D uDensityAcc;
+layout(r8,    binding = 5) uniform writeonly image3D uDensityOut;
+layout(r32ui, binding = 4) uniform readonly uimage3D uLightAcc;
+layout(rgba8, binding = 6) uniform writeonly image3D uLightOut;
+
+layout(std430, binding = 1) readonly buffer CascadeMetaBuf {
+    uint meta[];
+};
+
+layout(push_constant) uniform SmokeParams {
+    int   uCascadeIndex;
+    int   uParticleCount;
+    int   uBrickShift;
+    int   uNoiseShift;
+    vec4  uBoundsMin;
+    vec4  uBoundsSize;
+    ivec4 uGridSize;
+    vec4  uCellSize;
+    vec4  uNoiseParams; // x=noiseMinMul, y=noiseMaxMul, z=hasLightMap
+} pc;
+
+const uint META_STRIDE = 8u;
+
+bool cascadeOccupied() {
+    return meta[uint(pc.uCascadeIndex) * META_STRIDE + 0u] != 0u;
+}
+
+vec3 unpack_rgb24(uint packedVal) {
+    uint r = (packedVal >> 16) & 0xFFu;
+    uint g = (packedVal >>  8) & 0xFFu;
+    uint b = (packedVal >>  0) & 0xFFu;
+    return vec3(float(r), float(g), float(b)) * (1.0 / 255.0);
+}
+
+uint safeLight(ivec3 p) {
+    ivec3 c = clamp(p, ivec3(0), pc.uGridSize.xyz - ivec3(1));
+    return imageLoad(uLightAcc, c).r;
+}
+
+uint dilateLight(ivec3 p) {
+    uint m = 0u;
+    for (int z = -1; z <= 1; ++z) {
+        for (int y = -1; y <= 1; ++y) {
+            for (int x = -1; x <= 1; ++x) {
+                if (x == 0 && y == 0 && z == 0) continue;
+                m = max(m, safeLight(p + ivec3(x, y, z)));
+            }
+        }
+    }
+    return m;
+}
+
+void main() {
+    ivec3 p = ivec3(gl_GlobalInvocationID.xyz);
+    if (any(greaterThanEqual(p, pc.uGridSize.xyz))) return;
+
+    if (!cascadeOccupied()) {
+        imageStore(uDensityOut, p, vec4(0.0, 0.0, 0.0, 0.0));
+        imageStore(uLightOut,   p, vec4(0.0, 0.0, 0.0, 1.0));
+        return;
+    }
+
+    uint sum = imageLoad(uDensityAcc, p).r;
+    uint d = min(sum, 255u);
+    float f = float(d) * (1.0 / 255.0);
+    imageStore(uDensityOut, p, vec4(f, 0.0, 0.0, 1.0));
+
+    uint lightPacked = imageLoad(uLightAcc, p).r;
+    if (lightPacked == 0u) {
+        lightPacked = dilateLight(p);
+    }
+
+    vec3 rgb = unpack_rgb24(lightPacked);
+    imageStore(uLightOut, p, vec4(rgb, 1.0));
+}

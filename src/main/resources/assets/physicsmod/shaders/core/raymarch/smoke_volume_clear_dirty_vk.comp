@@ -1,0 +1,61 @@
+#version 460
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 4) in;
+
+layout(std430, binding = 1) readonly buffer CascadeMetaBuf {
+    uint meta[];
+};
+
+layout(r32ui, binding = 2) uniform writeonly uimage3D uDensityAcc;
+layout(r32ui, binding = 4) uniform writeonly uimage3D uLightAcc;
+
+layout(push_constant) uniform SmokeParams {
+    int   uCascadeIndex;
+    int   uParticleCount;
+    int   uBrickShift;
+    int   uNoiseShift;
+    vec4  uBoundsMin;
+    vec4  uBoundsSize;
+    ivec4 uGridSize;
+    vec4  uCellSize;
+    vec4  uNoiseParams; // x=noiseMinMul, y=noiseMaxMul, z=hasLightMap
+} pc;
+
+const uint META_STRIDE = 8u;
+
+bool cascadeOccupied() {
+    return meta[uint(pc.uCascadeIndex) * META_STRIDE + 0u] != 0u;
+}
+
+ivec3 prevMinVoxel() {
+    uint base = uint(pc.uCascadeIndex) * META_STRIDE;
+    return ivec3(
+        (pc.uGridSize.x - 1) - int(meta[base + 4u]),
+        (pc.uGridSize.y - 1) - int(meta[base + 5u]),
+        (pc.uGridSize.z - 1) - int(meta[base + 6u])
+    );
+}
+
+ivec3 prevMaxVoxel() {
+    uint base = uint(pc.uCascadeIndex) * META_STRIDE;
+    return ivec3(
+        int(meta[base + 1u]),
+        int(meta[base + 2u]),
+        int(meta[base + 3u])
+    );
+}
+
+void main() {
+    if (!cascadeOccupied()) return;
+
+    ivec3 p = ivec3(gl_GlobalInvocationID.xyz);
+    if (any(greaterThanEqual(p, pc.uGridSize.xyz))) return;
+
+    ivec3 lo = clamp(prevMinVoxel(), ivec3(0), pc.uGridSize.xyz - ivec3(1));
+    ivec3 hi = clamp(prevMaxVoxel(), ivec3(0), pc.uGridSize.xyz - ivec3(1));
+
+    if (any(lessThan(p, lo)) || any(greaterThan(p, hi))) return;
+
+    imageStore(uDensityAcc, p, uvec4(0u));
+    imageStore(uLightAcc,   p, uvec4(0u));
+}
