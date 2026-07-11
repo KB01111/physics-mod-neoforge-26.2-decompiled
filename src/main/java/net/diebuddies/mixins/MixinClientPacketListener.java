@@ -55,8 +55,9 @@ public class MixinClientPacketListener {
       method = {"handleExplosion"}
    )
    private void physicsmod$handleExplosion(ClientboundExplodePacket explosionPacket, CallbackInfo info) {
+      PacketUtils.ensureRunningOnSameThread(explosionPacket, (ClientPacketListener)(Object)this, Minecraft.getInstance().packetProcessor());
       Explosion explosion = new Explosion();
-      explosion.strength = 5.0F;
+      explosion.strength = explosionPacket.radius();
       explosion.position = new Vector3d(explosionPacket.center().x, explosionPacket.center().y, explosionPacket.center().z);
       PhysicsMod mod = PhysicsMod.getInstance(this.level);
       mod.explosions.add(explosion);

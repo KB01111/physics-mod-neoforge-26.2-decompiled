@@ -514,13 +514,15 @@ public class PhysicsMod {
    }
 
    public static PhysicsMod getInstance(ClientLevel level) {
-      PhysicsMod mod = (PhysicsMod)instances.get(level);
-      if (mod == null) {
-         mod = new PhysicsMod(level);
-         instances.put(level, mod);
-      }
+      synchronized (instances) {
+         PhysicsMod mod = (PhysicsMod)instances.get(level);
+         if (mod == null) {
+            mod = new PhysicsMod(level);
+            instances.put(level, mod);
+         }
 
-      return mod;
+         return mod;
+      }
    }
 
    public static PhysicsMod getInstanceNullable(ClientLevel level) {

@@ -20,10 +20,12 @@ public class EnumSelectionList extends LegacyObjectSelectionList<BaseEntry> {
    public void refreshEntries() {
       this.clearEntries();
       LabelEntry first = null;
+      Language language = Language.getInstance();
+      String filterLower = this.filter.toLowerCase(Locale.ROOT);
 
       for (Enum<?> value : this.selectedEnum.getDeclaringClass().getEnumConstants()) {
-         String label = Language.getInstance().getOrDefault(value.toString());
-         if (label.toLowerCase(Locale.ROOT).contains(this.filter.toLowerCase(Locale.ROOT))) {
+         String label = language.getOrDefault(value.toString());
+         if (label.toLowerCase(Locale.ROOT).contains(filterLower)) {
             LabelEntry entry = new LabelEntry(this, label);
             entry.setUserData(value);
             this.addEntry(entry);
