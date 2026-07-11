@@ -1,6 +1,5 @@
 package net.diebuddies.mixins;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.diebuddies.config.ConfigClient;
 import net.diebuddies.config.ConfigMobs;
 import net.diebuddies.math.Math;
@@ -35,9 +34,8 @@ public class MixinLivingEntity {
    )
    public void onDeath(DamageSource source, CallbackInfo info) {
       LivingEntity entity = (LivingEntity)(Object)this;
-      if (RenderSystem.isOnRenderThread()
-         && ConfigMobs.getMobSetting(entity).getType() != MobPhysicsType.OFF
-         && entity.level() instanceof ClientLevel clientLevel) {
+      MobPhysicsType mobType = ConfigMobs.getMobSetting(entity).getType();
+      if (mobType != MobPhysicsType.OFF && entity.level() instanceof ClientLevel clientLevel) {
          PhysicsMod.blockifyEntity(clientLevel, entity);
       }
    }

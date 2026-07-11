@@ -154,10 +154,11 @@ public class ParticleDisplayScreen extends Screen {
             Minecraft.getInstance().gameRenderer.lighting().setupFor(Entry.ITEMS_3D);
             int lightCoords = 15728880;
             ParticleDisplayScreen.this.animationStart = ParticleDisplayScreen.this.animationStart - (double)delta * 0.05;
+            float animationSpeed = java.lang.Math.max(ParticleDisplayScreen.this.animation.speed, 0.001F);
             float despawnScale = ParticleDisplayScreen.this.animation
                .getCurve()
-               .get((float)(ParticleDisplayScreen.this.animationStart / (double)ParticleDisplayScreen.this.animation.speed));
-            if (ParticleDisplayScreen.this.animationStart > (double)ParticleDisplayScreen.this.animation.speed) {
+               .get((float)(ParticleDisplayScreen.this.animationStart / (double)animationSpeed));
+            if (ParticleDisplayScreen.this.animationStart > (double)animationSpeed) {
                despawnScale = 1.0F;
             } else if (ParticleDisplayScreen.this.animationStart <= 0.0) {
                despawnScale = 0.0F;

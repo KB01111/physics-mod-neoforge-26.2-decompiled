@@ -195,7 +195,7 @@ public class PhysicsMod {
    public ConcurrentLinkedQueue<Ragdoll> ragdolls = new ConcurrentLinkedQueue<>();
    public ConcurrentLinkedQueue<Ragdoll> sodiumRemoveRagdolls = new ConcurrentLinkedQueue<>();
    public Set<BlockPos> fallingBlocks = new ObjectOpenHashSet();
-   public List<BlockUpdate> updateQueue = new ObjectArrayList();
+   public ConcurrentLinkedQueue<BlockUpdate> updateQueue = new ConcurrentLinkedQueue<>();
    public List<PhysicsEntity> blockifiedEntity = new ObjectArrayList();
    public PhysicsEntity itemStackEntity;
    public Set<BlockUpdate> removeUpdates = new ObjectOpenHashSet();

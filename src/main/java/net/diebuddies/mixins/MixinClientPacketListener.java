@@ -1,6 +1,5 @@
 package net.diebuddies.mixins;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.Set;
 import net.diebuddies.config.ConfigClient;
 import net.diebuddies.math.Math;
@@ -56,13 +55,11 @@ public class MixinClientPacketListener {
       method = {"handleExplosion"}
    )
    private void physicsmod$handleExplosion(ClientboundExplodePacket explosionPacket, CallbackInfo info) {
-      if (RenderSystem.isOnRenderThread()) {
-         Explosion explosion = new Explosion();
-         explosion.strength = 5.0F;
-         explosion.position = new Vector3d(explosionPacket.center().x, explosionPacket.center().y, explosionPacket.center().z);
-         PhysicsMod mod = PhysicsMod.getInstance(this.level);
-         mod.explosions.add(explosion);
-      }
+      Explosion explosion = new Explosion();
+      explosion.strength = 5.0F;
+      explosion.position = new Vector3d(explosionPacket.center().x, explosionPacket.center().y, explosionPacket.center().z);
+      PhysicsMod mod = PhysicsMod.getInstance(this.level);
+      mod.explosions.add(explosion);
    }
 
    @Inject(
