@@ -211,38 +211,53 @@ public class PhysicsUpdater {
          List<Mesh> physicsMesh = null;
          if ((double)net.diebuddies.math.Math.random() < chance) {
             if (!(chance < 0.5) && !((double)physics.getBodies().size() > (double)ConfigClient.maxPhysicsObjects * 0.4)) {
-               int index = net.diebuddies.math.Math.randomInt(PhysicsMod.brokenBlocksLots.size());
+               int index = this.randomFractureIndex(PhysicsMod.brokenBlocksLots.size());
                if (voxel) {
-                  mesh = PhysicsMod.brokenBlocksLotsVoxel.get(index);
-                  physicsMesh = PhysicsMod.brokenBlocksLotsVoxelPhysics.get(index);
+                  mesh = this.getFractureMeshes(PhysicsMod.brokenBlocksLotsVoxel, index, PhysicsMod.brokenBlock);
+                  physicsMesh = this.getFractureMeshes(PhysicsMod.brokenBlocksLotsVoxelPhysics, index, null);
                } else {
-                  mesh = PhysicsMod.brokenBlocksLots.get(index);
+                  mesh = this.getFractureMeshes(PhysicsMod.brokenBlocksLots, index, PhysicsMod.brokenBlock);
                }
             } else {
-               int index = net.diebuddies.math.Math.randomInt(PhysicsMod.brokenBlocksLittle.size());
+               int index = this.randomFractureIndex(PhysicsMod.brokenBlocksLittle.size());
                if (voxel) {
-                  mesh = PhysicsMod.brokenBlocksLittleVoxel.get(index);
-                  physicsMesh = PhysicsMod.brokenBlocksLittleVoxelPhysics.get(index);
+                  mesh = this.getFractureMeshes(PhysicsMod.brokenBlocksLittleVoxel, index, PhysicsMod.brokenBlock);
+                  physicsMesh = this.getFractureMeshes(PhysicsMod.brokenBlocksLittleVoxelPhysics, index, null);
                } else {
-                  mesh = PhysicsMod.brokenBlocksLittle.get(index);
+                  mesh = this.getFractureMeshes(PhysicsMod.brokenBlocksLittle, index, PhysicsMod.brokenBlock);
                }
             }
 
             if (volume < 0.05) {
                mesh = PhysicsMod.brokenBlock;
+               physicsMesh = null;
             } else if (volume < 0.9) {
-               int indexx = net.diebuddies.math.Math.randomInt(PhysicsMod.brokenBlocksLittle.size());
+               int indexx = this.randomFractureIndex(PhysicsMod.brokenBlocksLittle.size());
                if (voxel) {
-                  mesh = PhysicsMod.brokenBlocksLittleVoxel.get(indexx);
-                  physicsMesh = PhysicsMod.brokenBlocksLittleVoxelPhysics.get(indexx);
+                  mesh = this.getFractureMeshes(PhysicsMod.brokenBlocksLittleVoxel, indexx, PhysicsMod.brokenBlock);
+                  physicsMesh = this.getFractureMeshes(PhysicsMod.brokenBlocksLittleVoxelPhysics, indexx, null);
                } else {
-                  mesh = PhysicsMod.brokenBlocksLittle.get(indexx);
+                  mesh = this.getFractureMeshes(PhysicsMod.brokenBlocksLittle, indexx, PhysicsMod.brokenBlock);
                }
             }
 
             physics.addBlockParticle(mesh, physicsMesh, particle);
          }
       }
+   }
+
+   private int randomFractureIndex(int size) {
+      return size <= 0 ? 0 : net.diebuddies.math.Math.randomInt(size);
+   }
+
+   private List<Mesh> getFractureMeshes(List<List<Mesh>> meshes, int index, List<Mesh> fallback) {
+      if (meshes.isEmpty()) {
+         return fallback;
+      }
+
+      int safeIndex = Math.min(index, meshes.size() - 1);
+      List<Mesh> selected = meshes.get(safeIndex);
+      return selected != null && !selected.isEmpty() ? selected : fallback;
    }
 
    private List<PhysicsEntity> getBlockData(PhysicsWorld physics, BlockUpdate update, ClientLevel level) {

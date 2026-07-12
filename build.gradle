@@ -64,6 +64,7 @@ tasks.named('compileJava') {
 dependencies {
     compileOnly files(
         'compile-deps/sodium-mod.jar',
+        'compile-deps/sodium-nested.jar',
         'compile-deps/iris-mod.jar',
         'compile-deps/emf-mod.jar',
         'compile-deps/vivecraft-mod.jar',
