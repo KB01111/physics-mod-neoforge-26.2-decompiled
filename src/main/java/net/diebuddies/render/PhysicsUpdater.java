@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import net.diebuddies.config.ConfigBlocks;
 import net.diebuddies.config.ConfigClient;
+import net.diebuddies.debug.AgentDebugLog;
 import net.diebuddies.math.AABBf;
 import net.diebuddies.minecraft.weather.WeatherEffects;
 import net.diebuddies.physics.BlockUpdate;
@@ -231,6 +232,14 @@ public class PhysicsUpdater {
             if (volume < 0.05) {
                mesh = PhysicsMod.brokenBlock;
                physicsMesh = null;
+               // #region agent log
+               AgentDebugLog.log(
+                  "D",
+                  "PhysicsUpdater.addPhysicsBlocks",
+                  "fallback to brokenBlock (low volume)",
+                  "{\"volume\":" + volume + ",\"voxel\":" + voxel + "}"
+               );
+               // #endregion
             } else if (volume < 0.9) {
                int indexx = this.randomFractureIndex(PhysicsMod.brokenBlocksLittle.size());
                if (voxel) {
@@ -241,6 +250,22 @@ public class PhysicsUpdater {
                }
             }
 
+            // #region agent log
+            AgentDebugLog.log(
+               "B",
+               "PhysicsUpdater.addPhysicsBlocks",
+               "mesh selection",
+               "{\"volume\":"
+                  + volume
+                  + ",\"voxel\":"
+                  + voxel
+                  + ",\"meshCount\":"
+                  + mesh.size()
+                  + ",\"usingFallback\":"
+                  + (mesh == PhysicsMod.brokenBlock)
+                  + "}"
+            );
+            // #endregion
             physics.addBlockParticle(mesh, physicsMesh, particle);
          }
       }
@@ -366,6 +391,35 @@ public class PhysicsUpdater {
                cuboidCornerToBlockSpace(element.to().x(), element.to().y(), element.to().z(), cuboidUnit)
             );
          }
+
+         // #region agent log
+         if (particles.size() < 3) {
+            AgentDebugLog.log(
+               "A",
+               "PhysicsUpdater.addParticles",
+               "cuboid coords",
+               "{\"cuboidUnit\":"
+                  + cuboidUnit
+                  + ",\"from\":["
+                  + element.from().x()
+                  + ","
+                  + element.from().y()
+                  + ","
+                  + element.from().z()
+                  + "],\"to\":["
+                  + element.to().x()
+                  + ","
+                  + element.to().y()
+                  + ","
+                  + element.to().z()
+                  + "],\"volume\":"
+                  + particle.getVolume()
+                  + ",\"fullBlock\":"
+                  + isFullBlockElement(element)
+                  + "}"
+            );
+         }
+         // #endregion
 
          particle.shade(element.shade());
          Minecraft minecraft = Minecraft.getInstance();
