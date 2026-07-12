@@ -6,6 +6,8 @@ out/
 
 # Downloaded compile-only dependency jars (see compile-deps/README.md)
 compile-deps/*.jar
+compile-deps/extracted/
+
 
 # Extracted mod libraries used during decompile work
 libs/
