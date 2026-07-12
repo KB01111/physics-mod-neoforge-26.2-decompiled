@@ -260,6 +260,31 @@ public class PhysicsUpdater {
       return selected != null && !selected.isEmpty() ? selected : fallback;
    }
 
+   private static float cuboidCoordinateUnit(CuboidModelElement element) {
+      return element.to().x() > 1.0F
+            || element.to().y() > 1.0F
+            || element.to().z() > 1.0F
+            || element.from().x() > 1.0F
+            || element.from().y() > 1.0F
+            || element.from().z() > 1.0F
+         ? 16.0F
+         : 1.0F;
+   }
+
+   private static boolean isFullBlockElement(CuboidModelElement element) {
+      float unit = cuboidCoordinateUnit(element);
+      return element.from().x() == 0.0F
+         && element.from().y() == 0.0F
+         && element.from().z() == 0.0F
+         && element.to().x() == unit
+         && element.to().y() == unit
+         && element.to().z() == unit;
+   }
+
+   private static Vector3f cuboidCornerToBlockSpace(float x, float y, float z, float unit) {
+      return new Vector3f(x / unit, y / unit, z / unit);
+   }
+
    private List<PhysicsEntity> getBlockData(PhysicsWorld physics, BlockUpdate update, ClientLevel level) {
       List<PhysicsEntity> particles = new ObjectArrayList();
       BlockPos pos = update.pos;
@@ -334,15 +359,11 @@ public class PhysicsUpdater {
 
       for (CuboidModelElement element : this.getBlockModelElements(unbakedModel.model)) {
          PhysicsEntity particle = new PhysicsEntity(PhysicsEntity.Type.BLOCK, state);
-         if (element.from().x() != 0.0F
-            || element.from().y() != 0.0F
-            || element.from().z() != 0.0F
-            || element.to().x() != 16.0F
-            || element.to().y() != 16.0F
-            || element.to().z() != 16.0F) {
+         float cuboidUnit = cuboidCoordinateUnit(element);
+         if (!isFullBlockElement(element)) {
             particle.rescale = new AABBf(
-               new Vector3f(element.from().x() / 16.0F, element.from().y() / 16.0F, element.from().z() / 16.0F),
-               new Vector3f(element.to().x() / 16.0F, element.to().y() / 16.0F, element.to().z() / 16.0F)
+               cuboidCornerToBlockSpace(element.from().x(), element.from().y(), element.from().z(), cuboidUnit),
+               cuboidCornerToBlockSpace(element.to().x(), element.to().y(), element.to().z(), cuboidUnit)
             );
          }
 
@@ -356,15 +377,12 @@ public class PhysicsUpdater {
          Matrix4d transformation = new Matrix4d();
          transformation.mul(modelTransformation);
          if (element.rotation() != null) {
-            transformation.translate(
-               (double)element.rotation().origin().x() - 0.5, (double)element.rotation().origin().y() - 0.5, (double)element.rotation().origin().z() - 0.5
-            );
+            double originX = (double)element.rotation().origin().x() / (double)cuboidUnit - 0.5;
+            double originY = (double)element.rotation().origin().y() / (double)cuboidUnit - 0.5;
+            double originZ = (double)element.rotation().origin().z() / (double)cuboidUnit - 0.5;
+            transformation.translate(originX, originY, originZ);
             transformation.mul(this.tmpMatrix.set(element.rotation().transform()));
-            transformation.translate(
-               -((double)element.rotation().origin().x() - 0.5),
-               -((double)element.rotation().origin().y() - 0.5),
-               -((double)element.rotation().origin().z() - 0.5)
-            );
+            transformation.translate(-originX, -originY, -originZ);
          }
 
          transformation.m30(transformation.m30() + (double)pos.getX() + 0.5 + blockOffset.x);
