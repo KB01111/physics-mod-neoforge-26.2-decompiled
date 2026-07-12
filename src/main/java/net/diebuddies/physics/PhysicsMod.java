@@ -214,8 +214,8 @@ public class PhysicsMod {
    public static final List<List<Mesh>> brokenBlocksLots = new ObjectArrayList();
    public static final List<List<Mesh>> brokenBlocksLittleVoxel = new ObjectArrayList();
    public static final List<List<Mesh>> brokenBlocksLotsVoxel = new ObjectArrayList();
-   public static final List<List<Mesh>> brokenBlocksLittleVoxelPhysics = createPhysicsMeshes(brokenBlocksLittle, brokenBlocksLittleVoxel);
-   public static final List<List<Mesh>> brokenBlocksLotsVoxelPhysics = createPhysicsMeshes(brokenBlocksLots, brokenBlocksLotsVoxel);
+   public static final List<List<Mesh>> brokenBlocksLittleVoxelPhysics = new ObjectArrayList();
+   public static final List<List<Mesh>> brokenBlocksLotsVoxelPhysics = new ObjectArrayList();
    public static final List<Mesh> brokenBlock = readBlock("assets/physicsmod/models/fractures/physics_simple.obj");
    public static final List<Mesh> snowballMesh = new ObjectArrayList();
    public static final List<List<Mesh>> snowballMeshFractured = new ObjectArrayList();
@@ -1679,6 +1679,8 @@ public class PhysicsMod {
       eggMesh.add(readBlock("assets/physicsmod/models/egg/egg_round.obj").get(0));
       eggMeshFractured.add(readBlock("assets/physicsmod/models/egg/egg_voxel_fractured.obj"));
       eggMeshFractured.add(readBlock("assets/physicsmod/models/egg/egg_round_fractured.obj"));
+      brokenBlocksLittleVoxelPhysics.addAll(createPhysicsMeshes(brokenBlocksLittle, brokenBlocksLittleVoxel));
+      brokenBlocksLotsVoxelPhysics.addAll(createPhysicsMeshes(brokenBlocksLots, brokenBlocksLotsVoxel));
    }
 
    public static enum RenderPass {

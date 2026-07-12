@@ -74,6 +74,11 @@ public class CycleOption<T> extends LegacyOption {
       return this;
    }
 
+   public CycleOption<T> setActive(boolean active) {
+      this.active = active;
+      return this;
+   }
+
    @Override
    public AbstractWidget createButton(Options options, int i, int j, int k) {
       CycleButton.TooltipSupplier<T> tooltipSupplier = this.tooltip.apply(Minecraft.getInstance());
